@@ -8,7 +8,7 @@ Goal is to create a system that we can use to scale the thebe backends.  The ide
 
 The following diagram summarizes the architecture:
 
-![images/architecture.png]
+![Architecture](images/architecture.png)
 
 ## Thebe Server
 
