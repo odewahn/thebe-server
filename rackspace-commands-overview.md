@@ -217,3 +217,13 @@ docker run -d            \
    ipython/scipystack    \
    /bin/sh -c 'ipython notebook --ip=0.0.0.0 --no-browser'
 ```
+
+To see the status, do a `docker ps`
+
+```
+# docker ps
+CONTAINER ID        IMAGE                       COMMAND                CREATED             STATUS              PORTS                          NAMES
+e13c8fdc2ce8        ipython/scipystack:latest   "/bin/sh -c 'ipython   4 seconds ago       Up 5 seconds        104.130.0.51:49153->8888/tcp   e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6-n1/dreamy_elion  
+```
+
+From the output, you can see that the notebook server is running at `104.130.0.51:49153`.  Opening this in the browser will let you use the web UI.
