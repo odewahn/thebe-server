@@ -28,6 +28,14 @@ A background service that culls unused containers.
 
 All the docker containers are launched and managed by swarm.  We'll use the Rackspace offering for this as a host (https://mycluster.rackspacecloud.com/)
 
+
+```
+docker run -d           \
+   -p 8888:8888          \
+   ipython/scipystack    \
+   ipython notebook --ip=0.0.0.0 --no-browser
+```
+
 ## Interlock
 
 Interlock (https://github.com/ehazlett/interlock) will monitor the swarm cluster and set up the required proxies

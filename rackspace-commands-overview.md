@@ -1,10 +1,8 @@
-# Install Rack
+## Setting up `swarm-manager` and `interlock` servers
 
-You download it from here:
+### Download and configure `rack`
 
-## Configure it
-
-Run `rack configure` to set up your credentials.  You'll be asked for:
+[rack](https://github.com/rackspace/rack) is the new Rackspace command-line tool for managing their clusters.  You'll need to download the executable, and once it's installd, run `rack configure` to set up your credentials.  You'll be asked for:
 
 * Username
 * API Key (get this in your account settings screen)
@@ -13,7 +11,7 @@ Run `rack configure` to set up your credentials.  You'll be asked for:
 You default credentials are saved at `~/.rack/config`
 
 
-## See the list of images
+### Get a list of available images
 
 An image is basically the OS type you want.  You can get a list of the available image like this (I'm just showing Ubuntu becasue there are a *lot* of images)
 
@@ -29,20 +27,13 @@ eb6f98a3-5f5d-4153-a011-99823e076dd7	OnMetal - Ubuntu 12.04 LTS (Precise Pangoli
 5ed162cc-b4eb-4371-b24a-a0ae73376c73	Ubuntu 14.04 LTS (Trusty Tahr) (PV)				ACTIVE	20512
 ```
 
-## See the flavors
+### Get  list of available flavors
 
 A `flavor` is basically the specs (RAM, disk, etc) that the new image will run on.
 
 ```
 $ rack servers flavor list
 ID			Name			RAM	Disk	Swap	VCPUs	RxTxFactor
-2			512MB Standard Instance	512	20	512	1	80
-3			1GB Standard Instance	1024	40	1024	1	120
-4			2GB Standard Instance	2048	80	2048	2	240
-5			4GB Standard Instance	4096	160	2048	2	400
-6			8GB Standard Instance	8192	320	2048	4	600
-7			15GB Standard Instance	15360	620	2048	6	800
-8			30GB Standard Instance	30720	1200	2048	8	1200
 compute1-15		15 GB Compute v1	15360	0	0	8	1250
 compute1-30		30 GB Compute v1	30720	0	0	16	2500
 compute1-4		3.75 GB Compute v1	3840	0	0	2	312.5
@@ -52,23 +43,7 @@ general1-1		1 GB General Purpose v1	1024	20	0	1	200
 general1-2		2 GB General Purpose v1	2048	40	0	2	400
 general1-4		4 GB General Purpose v1	4096	80	0	4	800
 general1-8		8 GB General Purpose v1	8192	160	0	8	1600
-io1-120			120 GB I/O v1		122880	40	0	32	10000
-io1-15			15 GB I/O v1		15360	40	0	4	1250
-io1-30			30 GB I/O v1		30720	40	0	8	2500
-io1-60			60 GB I/O v1		61440	40	0	16	5000
-io1-90			90 GB I/O v1		92160	40	0	24	7500
-memory1-120		120 GB Memory v1	122880	0	0	16	5000
-memory1-15		15 GB Memory v1		15360	0	0	2	625
-memory1-240		240 GB Memory v1	245760	0	0	32	10000
-memory1-30		30 GB Memory v1		30720	0	0	4	1250
-memory1-60		60 GB Memory v1		61440	0	0	8	2500
-onmetal-compute1	OnMetal Compute v1	32768	32	0	20	10000
-onmetal-io1		OnMetal IO v1		131072	32	0	40	10000
-onmetal-memory1		OnMetal Memory v1	524288	32	0	24	10000
-performance1-1		1 GB Performance	1024	20	0	1	200
-performance1-2		2 GB Performance	2048	40	0	2	400
-performance1-4		4 GB Performance	4096	40	0	4	800
-performance1-8		8 GB Performance	8192	40	0	8	1600
+...
 performance2-120	120 GB Performance	122880	40	0	32	10000
 performance2-15		15 GB Performance	15360	40	0	4	1250
 performance2-30		30 GB Performance	30720	40	0	8	2500
@@ -76,38 +51,169 @@ performance2-60		60 GB Performance	61440	40	0	16	5000
 performance2-90		90 GB Performance	92160	40	0	24	7500
 ```
 
-## Setting up your credentials
+## Create and configure the two servers
 
-Like other big services, Rackspace uses keypairs to control access to the servers.  So, when you set up a server, you need to create or specify the keypairs for the machine's you'll want to have access to a server. 
+First, I'll make two servers: `rackspace-swarm-test` and `interlock`.
 
-### To create a keypair
 
-```
-$ rack servers keypair generate --name odewahn-macbook-air
-Name		odewahn-macbook-air
-Fingerprint	01:de:f4:ee:73:15:46:9b:53:d4:06:9f:be:94:fb:c4
-PublicKey	ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDkAlOHDRIxij/A46o1MHEWVe4IPYJ5PRyahSh6gTq8gyVZJDltAVODQoudMjCDUb5FzWVKSwZjUr7WCGJvE0J/ClBxBfXfJ8jH+D5EeEQDbiwqHCAq+5/vtP9rf2bqZd1L8STBbcy+eYGSzMO4TO+RTe0XuIsrspL5wNkvnY82pG/CA9pCLsopUjcWG22iNFj29/bUGdgRToecJUud4WT4rfshiEEEXqTnflLxjPeRzf8mipZ+aIPyIPYU6Rf9/UBWgggrBgE0yOU5JLMqhyG8G/m63XgquJlCoQ9+99HzjyywM55Gi8RNJ53nMXLIaN9pjIbsDCBmVmtyl1UXkml/ Generated-by-Nova
-PrivateKey	-----BEGIN RSA PRIVATE KEY-----
-    Lots of stuff here
+The first server, `rackspace-swarm-test`, will be used to launch and control the cluster.  Here's the command to create it:
 
 ```
-
-### To see existing keypairs you can use
-
-```
-$ rack servers keypair list
-Name			Fingerprint
-odewahn-macbook-air	01:de:f4:ee:73:15:46:9b:53:d4:06:9f:be:94:fb:c4
-odewahn-orm-mac		9e:70:4f:55:1b:4f:0e:c9:d6:5f:39:1d:27:86:5c:0d
-```
-
-
-
-
-
-
 rack servers instance create \
-    --name docker-test \
+    --name rackspace-swarm-test \
     --image-id 5ed162cc-b4eb-4371-b24a-a0ae73376c73 \
-    --flavor-id general1-1 \
-    --keypair my-laptop
+    --flavor-id general1-1
+```
+
+You'll get back a response like this:
+
+```
+ID		e3f8a765-8ced-457b-92ea-a16adbfd578d
+AdminPass	************
+```
+
+Once you get the login, run the following command to get your IP-address:
+
+```
+$ rack servers instance list
+ID					Name			Status	PublicIPv4	PrivateIPv4	Image		Flavor
+9ca37f1c-1951-43a5-a478-9cfef4571609	rackspace-swarm-test	ACTIVE	104.130.169.111	10.176.194.230	5ed162cc-b4e
+...
+```
+
+Then, login, like this:
+
+```
+$ ssh root@104.130.169.111
+```
+
+Finally, to make things simpler, add your public key to the `~/.ssh/authorized_keys` file and do whatever other setup you would normally do on a new user account (`apt-get update`, create a user, etc).
+
+Use the password that you got from the command line tool.  You can also probably use a [keypair](keypair.md), although I've not figured out how to make that work.  *ALSO, THIS WOULD BE A GOOD PLACE TO HAVE SOMETHING LIKE ANSIBLE*.
+
+Once you've set up that server, create another one to run [Interlock](https://github.com/ehazlett/interlock), the proxy server for swarm:
+
+```
+rack servers instance create \
+    --name interlock \
+    --image-id 5ed162cc-b4eb-4371-b24a-a0ae73376c73 \
+    --flavor-id general1-1
+```
+
+
+# Set up your cluster
+
+Once you've got the two servers set up, you're ready to start the swarm.  First, log into the [rackspace cluster manager](https://mycluster.rackspacecloud.com/).  
+From the main page, create a new cluster (right now there's only 1 button to push).  I've named mine `thebe-test`:
+
+![Cluster dashboard](images/rackspace-cluster.png)
+
+Once you've got the cluster running, you'll need to download the credentials file by clicking the "Download credentials" link in the "Action" area.  (It looks like a circle with an arrow pointing down.)
+
+When you unzip it, you'll see a new
+directory whose name looks like a UUID or a swarm id.  
+
+```
+$ unzip thebe-test.zip
+Archive:  thebe-test.zip
+   creating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/
+  inflating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/ca.pem  
+  inflating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/README.md  
+  inflating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/ca-key.pem  
+  inflating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/docker.env  
+  inflating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/cert.pem  
+  inflating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/key.pem  
+$ cd e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/
+$ ls -la
+total 48
+drwxr-xr-x@  8 apple  staff   272 Aug 28 10:36 .
+drwx------+ 56 apple  staff  1904 Sep  1 14:50 ..
+-rw-r--r--@  1 apple  staff  3177 Aug 28 10:36 README.md
+-rw-r--r--@  1 apple  staff  1766 Aug 28 10:35 ca-key.pem
+-rw-r--r--@  1 apple  staff  1119 Aug 28 10:35 ca.pem
+-rw-r--r--@  1 apple  staff  1086 Aug 28 10:35 cert.pem
+-rw-r--r--@  1 apple  staff   153 Aug 28 10:36 docker.env
+-rw-r--r--@  1 apple  staff  1679 Aug 28 10:35 key.pem
+$
+```
+
+You'll see the following files inside this new directory:
+
+* README.md - a set of instructions with how to use the credentials
+* ca.pem - Certificate Authority, used by clients to validate servers
+* cert.pem - Client Certificate, used by clients to identify themselves to servers
+* key.pem - Client Private Key, used by clients to encrypt their requests
+* ca-key.pem - Certificate Authority Key, private file used to generate more client certificates.
+* docker.env - Shell environment config file
+
+
+## Using `rackspace-swarm-test`
+
+If you don't have Docker 1.6 installed on your local host machine, you can also run it from the `rackspace-swarm-test` server you created earlier.  
+
+Once you've downloaded the credentials, just `scp` the file over, like this:
+
+```
+scp your-credential-file.zip root@rackspace-swarm-test
+```
+
+Once it's copied, login to the server, unzip it, and then you're good to go.
+
+
+
+### Set up the docker environment
+
+Run the `docker.env` file inside your new directory in order to set your credentials so that you can access the swarm:
+
+```
+$ cd e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/
+$ source docker.env
+```
+
+
+
+You can use `docker info` to see the setup:
+
+```
+# docker info
+Containers: 12
+Images: 8
+Storage Driver:
+Role: primary
+Strategy: spread
+Filters: affinity, health, constraint, port, dependency
+Nodes: 2
+ e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6-n1: 104.130.0.51:42376
+  └ Containers: 6
+  └ Reserved CPUs: 0 / 12
+  └ Reserved Memory: 0 B / 2.1 GiB
+  └ Labels: executiondriver=native-0.2, kernelversion=3.12.36-2-rackos, operatingsystem=Debian GNU/Linux 7 (wheezy) (containerized), storagedriver=aufs
+ e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6-n2: 104.130.0.52:42376
+  └ Containers: 6
+  └ Reserved CPUs: 0 / 12
+  └ Reserved Memory: 0 B / 2.1 GiB
+  └ Labels: executiondriver=native-0.2, kernelversion=3.12.36-2-rackos, operatingsystem=Debian GNU/Linux 7 (wheezy) (containerized), storagedriver=aufs
+Execution Driver:
+Kernel Version:
+Operating System:
+CPUs: 24
+Total Memory: 4.2 GiB
+Name: cbf73ed2e215
+ID:
+Http Proxy:
+Https Proxy:
+No Proxy:
+```
+
+# Using the Swarm
+
+Once you get all the credentials set up, using the swarm looks a lot like using regular old docker, except now everything is running on a cluster.  
+
+For example, here's how you start a notebook on the swarm
+
+```
+docker run -d            \
+   -p 8888               \
+   ipython/scipystack    \
+   /bin/sh -c 'ipython notebook --ip=0.0.0.0 --no-browser'
+```
