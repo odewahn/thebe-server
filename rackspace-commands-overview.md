@@ -154,7 +154,7 @@ If you don't have Docker 1.6 installed on your local host machine, you can also 
 Once you've downloaded the credentials, just `scp` the file over, like this:
 
 ```
-scp your-credential-file.zip root@rackspace-swarm-test
+scp your-credential-file.zip root@rackspace-swarm-test:.
 ```
 
 Once it's copied, login to the server, unzip it, and then you're good to go.
