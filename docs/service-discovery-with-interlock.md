@@ -1,6 +1,6 @@
 # Service discovery with interlock (HAProxy plugin)
 
-[Interlock](https://github.com/ehazlett/interlock) is a plugin-service for Docker.  Its `HAProxy` plugin "adds an event driven load balancer and reverse proxy for Docker. It automatically adds containers that are running in a Swarm to HAProxy."  
+[Interlock](https://github.com/ehazlett/interlock) is a plugin-service for Docker.  Its [HAProxy](https://github.com/ehazlett/interlock/tree/master/plugins/haproxy) plugin "adds an event driven load balancer and reverse proxy for Docker. It automatically adds containers that are running in a Swarm to HAProxy."  
 
 It provides a really simple way to do service discovery for swarm.
 
@@ -38,7 +38,7 @@ docker run -d -p 80:80 -v $CREDS_DIR:/certs ehazlett/interlock \
 
 ## Start some containers on the swarm controller
 
-Once its running, interlock will automatically handle proxying for new containers in the swarm.  
+Once it's running, interlock will automatically handle proxying for new containers in the swarm.  
 
 So, go back to your swarm host and start csome containers.  All you need to do is provide a few additional options to the docker command to publish the ports and specify the hostname:
 
