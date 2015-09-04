@@ -227,3 +227,65 @@ e13c8fdc2ce8        ipython/scipystack:latest   "/bin/sh -c 'ipython   4 seconds
 ```
 
 From the output, you can see that the notebook server is running at `104.130.0.51:49153`.  Opening this in the browser will let you use the web UI.
+
+# Adding interlock with HAProxy plugin
+
+Interlock is a plugi-service for Docker.  Its `HAProxy` plugin "adds an event driven load balancer and reverse proxy for Docker. It automatically adds containers that are running in a Swarm to HAProxy."  
+
+## Starting Interlock
+
+To use it, you'll need to provide the following values, which can all be found in the `docker.env` file:
+
+* --swarm-url: url to swarm (default: tcp://127.0.0.1:2375)
+* --swarm-tls-ca-cert: TLS CA certificate to use with swarm (optional)
+* --swarm-tls-cert: TLS certificate to use with swarm (optional)
+* --swarm-tls-key: TLS certificate key to use with swarm (optional)
+
+
+First, you need to figure out where your swarm is running.  To do this, run the following command on the machine where you're controlling the swarm (i.e., the place where you ran the `source docker.env` command):
+
+```
+# cat bea81d17-0f6a-40af-affe-5846a528e574/docker.env | grep HOST
+export DOCKER_HOST=tcp://104.130.0.52:2376
+```
+
+Next, start the interlock service on the proxy host:
+
+```
+export CREDS_DIR=/root/bea81d17-0f6a-40af-affe-5846a528e574
+export SWARM_URL=tcp://104.130.0.124:2376
+
+docker run -d -p 80:80 -v $CREDS_DIR:/certs ehazlett/interlock \
+   --swarm-url         $SWARM_URL \
+   --swarm-tls-ca-cert /certs/ca.pem \
+   --swarm-tls-cert    /certs/cert.pem \
+   --swarm-tls-key     /certs/key.pem \
+   --debug \
+   --plugin haproxy start
+```
+
+## Enable wildcard DNS for the interlock server
+
+Finally, make sure that you have enabled wildcard DNS on the domain where interlock is running (i.e., so that you can have a domain like `*.interlock.odewahn.com`):
+
+![enable wildcard dns](images/wildcard-dns.png)
+
+
+## Start containers
+
+Once its running, interlock will automatically handle proxying for new containers in the swarm.  All you need to do is provide a few additional options to the docker command to publish the ports and specify the hostname:
+
+```
+docker run -d  \
+   -p 8888 \
+   -P \
+   --hostname hubba.interlock.odewahn.com \
+   ipython/scipystack    \
+   /bin/sh -c 'ipython notebook --ip=0.0.0.0 --no-browser'
+```
+
+## View the HAProxy status
+
+HAProxy has a neat little web-based monitoring tool that you can use to see the running containers.  Just go to your interlock host and use the path `/haproxy?stats`.  The username is `stats` and the password is `interlock` (note that you can override this per the instruction on the [HAProxy plugin page](https://github.com/ehazlett/interlock/tree/master/plugins/haproxy)).
+
+![interlock gui](images/haproxy-stats.png)
