@@ -1,4 +1,4 @@
-## Install HAProx
+## Install HAProxy
 
 The interlock plugin requires HAProxy v 1.5+; if you're on Ubuntu 14.04, you can install it with the following commands:
 
