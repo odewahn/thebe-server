@@ -1,6 +1,6 @@
 # A quick tour of Rack
 
-[rack](https://github.com/rackspace/rack) is a command-line tool for managing your Rackspace servers.  To get started, download the executable.  Once it's installed, run `rack configure` to set up your credentials.  You'll be asked for:
+[rack](https://github.com/rackspace/rack) is a command-line tool for managing your Rackspace account.  To get started, download the executable.  Once it's installed, run `rack configure` to set up your credentials.  You'll be asked for:
 
 * Your Rackspace username
 * API Key (get this in your account settings screen)
