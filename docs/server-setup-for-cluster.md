@@ -7,7 +7,7 @@ The first server, `rackspace-swarm-test`, will be used to launch and control the
 
 ```
 rack servers instance create \
-    --name rackspace-swarm-test \
+    --name swarm-test \
     --image-id 5ed162cc-b4eb-4371-b24a-a0ae73376c73 \
     --flavor-id general1-1
 ```
