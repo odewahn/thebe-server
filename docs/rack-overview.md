@@ -11,7 +11,7 @@ You default credentials are saved at `~/.rack/config`
 
 ## List available images
 
-An image is basically the OS type you want.  You can get a list of the available image like this (I'm just showing Ubuntu becasue there are a *lot* of images)
+An image is the OS type you want.  You can get a list of the available image like this (I'm just showing Ubuntu becasue there are a *lot* of images)
 
 ```
 $ rack servers image list | grep Ubuntu
@@ -27,7 +27,7 @@ eb6f98a3-5f5d-4153-a011-99823e076dd7	OnMetal - Ubuntu 12.04 LTS (Precise Pangoli
 
 ### List available flavors
 
-A `flavor` is basically the specs (RAM, disk, etc) that the new image will run on.
+A `flavor` describes the specs (RAM, disk, etc) that the new image will run on.
 
 ```
 $ rack servers flavor list
@@ -99,6 +99,7 @@ odewahn-orm-mac		9e:70:4f:55:1b:4f:0e:c9:d6:5f:39:1d:27:86:5c:0d
 
 ## Create a server
 
+Use `rack servers create` to create a new server.  You'll need to provide the `image-id` and `flavor-id` you want (see the earlier section on how to find this information).  For example, the following command will create a 1GB RAM / 1 CPU server named `swarm-test` running Ubuntu 14.04 with my default keypair: 
 
 
 ```
