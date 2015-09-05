@@ -1,10 +1,12 @@
 # A quick tour of Rack
 
-[rack](https://github.com/rackspace/rack) is the new Rackspace command-line tool for managing their clusters.  You'll need to download the executable, and once it's installd, run `rack configure` to set up your credentials.  You'll be asked for:
+[rack](https://github.com/rackspace/rack) is a command-line tool for managing your Rackspace servers.  To get started, download the executable.  Once it's installed, run `rack configure` to set up your credentials.  You'll be asked for:
 
 * Your Rackspace username
 * API Key (get this in your account settings screen)
 * Region (DFW, IAD, ORD, LON, SYD, HKG)
+
+You can find this information in your web dashboard, but once you have them, you can start to manage your account strictly from the command line.
 
 You default credentials are saved at `~/.rack/config`
 
@@ -25,7 +27,7 @@ eb6f98a3-5f5d-4153-a011-99823e076dd7	OnMetal - Ubuntu 12.04 LTS (Precise Pangoli
 5ed162cc-b4eb-4371-b24a-a0ae73376c73	Ubuntu 14.04 LTS (Trusty Tahr) (PV)				ACTIVE	20512
 ```
 
-### List available flavors
+## List available flavors
 
 A `flavor` describes the specs (RAM, disk, etc) that the new image will run on.
 
