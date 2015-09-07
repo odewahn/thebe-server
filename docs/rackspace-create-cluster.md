@@ -5,10 +5,11 @@ From the main page, create a new cluster (right now there's only 1 button to pus
 
 ![Cluster dashboard](images/rackspace-cluster.png)
 
+## Download the credentials for the swarm
+
 Once you've got the cluster running, you'll need to download the credentials file by clicking the "Download credentials" link in the "Action" area.  (It looks like a circle with an arrow pointing down.)
 
-When you unzip it, you'll see a new
-directory whose name looks like a UUID or a swarm id.  
+When you unzip it, you'll see a new directory whose name looks like a UUID or a swarm id.  
 
 ```
 $ unzip thebe-test.zip
@@ -43,10 +44,11 @@ You'll see the following files inside this new directory:
 * ca-key.pem - Certificate Authority Key, private file used to generate more client certificates.
 * docker.env - Shell environment config file
 
+## Install Docker 1.6 on your client
 
-## Using `rackspace-swarm-test`
+The Rackspace cluser service is currently tied to Docker 1.6, so you'll need to install that version on your client.  The good things is that it's just a single compiled binary, so all you have to do is put it on your path.  (Note: if you already have a later version of Docker installed, you can doenload the file and give it a name like `docker16` so that you don't have a conflict.)
 
-If you don't have Docker 1.6 installed on your local host machine, you can also run it from the `rackspace-swarm-test` server you created earlier.  
+## Set up the Docker environment variables
 
 Once you've downloaded the credentials, just `scp` the file over, like this:
 
@@ -54,20 +56,12 @@ Once you've downloaded the credentials, just `scp` the file over, like this:
 scp your-credential-file.zip root@rackspace-swarm-test:.
 ```
 
-Once it's copied, login to the server, unzip it, and then you're good to go.
-
-
-
-### Set up the docker environment
-
-Run the `docker.env` file inside your new directory in order to set your credentials so that you can access the swarm:
+Once it's copied, login to the server, unzip it.  Run the `docker.env` file inside your new directory in order to set your credentials so that you can access the swarm:
 
 ```
 $ cd e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/
 $ source docker.env
 ```
-
-
 
 You can use `docker info` to see the setup:
 
@@ -102,7 +96,7 @@ Https Proxy:
 No Proxy:
 ```
 
-# Using the Swarm
+# Start a container on the swarm
 
 Once you get all the credentials set up, using the swarm looks a lot like using regular old docker, except now everything is running on a cluster.  
 
