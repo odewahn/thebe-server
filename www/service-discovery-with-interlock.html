@@ -1,0 +1,180 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="UTF-8"/>
+  <title>Rackspace Swarm</title>
+
+  <!-- Styling -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='assets/html.css' rel='stylesheet' type='text/css'>
+
+  <!-- JavaScript -->
+  <!-- CSS is loaded before JavaScript in order to improve user experience -->
+  <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script type="text/javascript"
+          src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script type="text/javascript" src="assets/jquery.transit.min.js"></script>
+</head>
+
+<body>
+<header>
+  <div id="buttons">
+    <i id="link-toc" class="fa fa-bars"></i>
+  </div>
+
+  <div class="heading">
+    <h1><a href="index.html">Rackspace Swarm by Andrew Odewahn</a></h1>
+
+    <div class="social-buttons">
+      <div class="twitter">
+        <a href="https://twitter.com/share" class="twitter-share-button" data-via="odewahn">Tweet</a>
+        <script>!function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+            if (!d.getElementById(id)) {
+              js = d.createElement(s);
+              js.id = id;
+              js.src = p + '://platform.twitter.com/widgets.js';
+              fjs.parentNode.insertBefore(js, fjs);
+            }
+          }(document, 'script', 'twitter-wjs');</script>
+      </div>
+      <div class="github">
+        <iframe src="http://ghbtns.com/github-btn.html?user=odewahn&repo=code-as-media&type=watch"
+                allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20">&nbsp;</iframe>
+      </div>
+    </div>
+  </div>
+
+  <a href="https://github.com/odewahn/patterns-of-code-as-media">
+    <img src="https://s3.amazonaws.com/orm-atlas-media/fork-on-github.png" class="fork-on-github"/>
+  </a>
+</header>
+
+<div id="flex-box">
+  <section id="sidebar">
+    
+
+<div class="toc-element clearfix">
+  <span class="fa fa-circle-o fa-2x fa-border"></span> <a href="rack-overview.html">Rack Overview</a>
+</div>
+
+
+
+<div class="toc-element clearfix">
+  <span class="fa fa-circle-o fa-2x fa-border"></span> <a href="rackspace-create-cluster.html">Create a Cluster</a>
+</div>
+
+
+
+<div class="toc-element clearfix">
+  <span class="fa fa-circle-o fa-2x fa-border"></span> <a href="service-discovery-with-interlock.html">Service Discovery with Interlock</a>
+</div>
+
+
+  </section>
+
+  <section id="content">
+    <section id="content-body">
+
+      <h1>Service discovery with interlock (HAProxy plugin)</h1><p><a href="https://github.com/ehazlett/interlock">Interlock</a> is a plugin-service for Docker.  Its <a href="https://github.com/ehazlett/interlock/tree/master/plugins/haproxy">HAProxy</a> plugin &quot;adds an event driven load balancer and reverse proxy for Docker. It automatically adds containers that are running in a Swarm to HAProxy.&quot;  </p>
+<p>It provides a really simple way to do service discovery for swarm.</p>
+<h2>Starting Interlock</h2><p>To use it, you&#39;ll need to give it following values, which can all be found in the <code>credentials</code> file for your cluster:</p>
+<ul>
+<li>--swarm-url: url to swarm (default: tcp://127.0.0.1:2375)</li>
+<li>--swarm-tls-ca-cert: TLS CA certificate to use with swarm (optional)</li>
+<li>--swarm-tls-cert: TLS certificate to use with swarm (optional)</li>
+<li>--swarm-tls-key: TLS certificate key to use with swarm (optional)</li>
+</ul>
+<p>First, you need to figure out where your swarm is running.  To do this, run the following command on the machine where you&#39;re controlling the swarm (i.e., the place where you ran the <code>source docker.env</code> command):</p>
+<pre><code># cat bea81d17-0f6a-40af-affe-5846a528e574/docker.env | grep HOST
+export DOCKER_HOST=tcp://104.130.0.52:2376
+</code></pre><p>Next, start the interlock service on the proxy host.  (Be sure to download and unzip your swarm&#39;s credentials first.)  We&#39;ll also set to environment variables just to hold some of the key info about the credentials:</p>
+<pre><code>export CREDS_DIR=/root/9fadfa89-0400-453a-a7eb-436aea737831
+export SWARM_URL=tcp://104.130.0.52:2376
+
+docker run -d -p 80:80 -v $CREDS_DIR:/certs ehazlett/interlock \
+   --swarm-url         $SWARM_URL \
+   --swarm-tls-ca-cert /certs/ca.pem \
+   --swarm-tls-cert    /certs/cert.pem \
+   --swarm-tls-key     /certs/key.pem \
+   --debug \
+   --plugin haproxy start
+</code></pre><h2>Start some containers on the swarm controller</h2><p>Once it&#39;s running, interlock will automatically handle proxying for new containers in the swarm.  </p>
+<p>So, go back to your swarm host and start csome containers.  All you need to do is provide a few additional options to the docker command to publish the ports and specify the hostname:</p>
+<pre><code>docker run -d  \
+   -p 8888 \
+   -P \
+   --hostname hubba.interlock.odewahn.com \
+   ipython/scipystack    \
+   /bin/sh -c &#39;ipython notebook --ip=0.0.0.0 --no-browser&#39;
+</code></pre><h2>View the HAProxy status</h2><p>HAProxy has a neat little web-based monitoring tool that you can use to see the running containers.  Just go to your interlock host and use the path <code>/haproxy?stats</code>.  The username is <code>stats</code> and the password is <code>interlock</code> (note that you can override this per the instruction on the <a href="https://github.com/ehazlett/interlock/tree/master/plugins/haproxy">HAProxy plugin page</a>).</p>
+<p><img src="images/haproxy-stats.png" alt="interlock gui"></p>
+<p>You can watch the monitor ro see the new endpoints as you add or remove containers.</p>
+<h2>Enable wildcard DNS for the interlock server</h2><p>Finally, make sure that you have enabled wildcard DNS on the domain where interlock is running (i.e., so that you can have a domain like <code>*.interlock.odewahn.com</code>):</p>
+<p><img src="images/wildcard-dns.png" alt="enable wildcard dns"></p>
+<p>Once you enable this, you&#39;ll be able to access your container using the hostame you provided.</p>
+
+      
+
+<div class="nav-buttons">
+<ul class="nav nav-pills">
+   
+      <li>
+         <a href="rackspace-create-cluster.html" title="Create a Cluster"> 
+            <span class="glyphicon glyphicon-chevron-left"/> Previous
+         </a>
+      </li>
+   
+   
+</ul>
+</div>
+
+
+      <div id="disqus_thread"></div>
+
+    </section>
+  </section>
+</div>
+
+<footer>
+  <img class="logo" src="http://orm-logo-service.herokuapp.com/webops/logo.svg"/>
+</footer>
+
+<script type="text/javascript">
+  var toggled;
+  $("#link-toc").click(function (event) {
+    event.preventDefault();
+    var sidebar = $("#sidebar");
+    if (!toggled) {
+      sidebar.transition({x: '25rem'});
+      toggled = true;
+    } else {
+      sidebar.transition({x: '-25rem'});
+      toggled = false;
+    }
+  });
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    window.disqus_shortname = 'dockerjumpstart'; // required: replace example with your forum shortname
+    window.disqus_title = $('title').text() + " / " + $('h1').first().text();
+    window.disqus_id = $('title').text() + " / " + $('section').first().attr('id');
+
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  });
+</script>
+</body>
+</html>

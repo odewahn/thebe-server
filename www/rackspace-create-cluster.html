@@ -1,0 +1,229 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="UTF-8"/>
+  <title>Rackspace Swarm</title>
+
+  <!-- Styling -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='assets/html.css' rel='stylesheet' type='text/css'>
+
+  <!-- JavaScript -->
+  <!-- CSS is loaded before JavaScript in order to improve user experience -->
+  <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script type="text/javascript"
+          src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script type="text/javascript" src="assets/jquery.transit.min.js"></script>
+</head>
+
+<body>
+<header>
+  <div id="buttons">
+    <i id="link-toc" class="fa fa-bars"></i>
+  </div>
+
+  <div class="heading">
+    <h1><a href="index.html">Rackspace Swarm by Andrew Odewahn</a></h1>
+
+    <div class="social-buttons">
+      <div class="twitter">
+        <a href="https://twitter.com/share" class="twitter-share-button" data-via="odewahn">Tweet</a>
+        <script>!function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+            if (!d.getElementById(id)) {
+              js = d.createElement(s);
+              js.id = id;
+              js.src = p + '://platform.twitter.com/widgets.js';
+              fjs.parentNode.insertBefore(js, fjs);
+            }
+          }(document, 'script', 'twitter-wjs');</script>
+      </div>
+      <div class="github">
+        <iframe src="http://ghbtns.com/github-btn.html?user=odewahn&repo=code-as-media&type=watch"
+                allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20">&nbsp;</iframe>
+      </div>
+    </div>
+  </div>
+
+  <a href="https://github.com/odewahn/patterns-of-code-as-media">
+    <img src="https://s3.amazonaws.com/orm-atlas-media/fork-on-github.png" class="fork-on-github"/>
+  </a>
+</header>
+
+<div id="flex-box">
+  <section id="sidebar">
+    
+
+<div class="toc-element clearfix">
+  <span class="fa fa-circle-o fa-2x fa-border"></span> <a href="rack-overview.html">Rack Overview</a>
+</div>
+
+
+
+<div class="toc-element clearfix">
+  <span class="fa fa-circle-o fa-2x fa-border"></span> <a href="rackspace-create-cluster.html">Create a Cluster</a>
+</div>
+
+
+
+<div class="toc-element clearfix">
+  <span class="fa fa-circle-o fa-2x fa-border"></span> <a href="service-discovery-with-interlock.html">Service Discovery with Interlock</a>
+</div>
+
+
+  </section>
+
+  <section id="content">
+    <section id="content-body">
+
+      <h1>Create a rackspace cluster</h1><p>Once you&#39;ve got the two servers set up, you&#39;re ready to create a swarm cluster.  First, log into the <a href="https://mycluster.rackspacecloud.com/">rackspace cluster manager</a>.<br>From the main page, create a new cluster (right now there&#39;s only 1 button to push).  I&#39;ve named mine <code>thebe-test</code>:</p>
+<p><img src="images/rackspace-cluster.png" alt="Cluster dashboard"></p>
+<h2>Download the credentials for the swarm</h2><p>Once you&#39;ve got the cluster running, you&#39;ll need to download the credentials file by clicking the &quot;Download credentials&quot; link in the &quot;Action&quot; area.  (It looks like a circle with an arrow pointing down.)</p>
+<p>When you unzip it, you&#39;ll see a new directory whose name looks like a UUID or a swarm id.  </p>
+<pre><code>$ unzip thebe-test.zip
+Archive:  thebe-test.zip
+   creating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/
+  inflating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/ca.pem  
+  inflating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/README.md  
+  inflating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/ca-key.pem  
+  inflating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/docker.env  
+  inflating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/cert.pem  
+  inflating: e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/key.pem  
+$ cd e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/
+$ ls -la
+total 48
+drwxr-xr-x@  8 apple  staff   272 Aug 28 10:36 .
+drwx------+ 56 apple  staff  1904 Sep  1 14:50 ..
+-rw-r--r--@  1 apple  staff  3177 Aug 28 10:36 README.md
+-rw-r--r--@  1 apple  staff  1766 Aug 28 10:35 ca-key.pem
+-rw-r--r--@  1 apple  staff  1119 Aug 28 10:35 ca.pem
+-rw-r--r--@  1 apple  staff  1086 Aug 28 10:35 cert.pem
+-rw-r--r--@  1 apple  staff   153 Aug 28 10:36 docker.env
+-rw-r--r--@  1 apple  staff  1679 Aug 28 10:35 key.pem
+$
+</code></pre><p>You&#39;ll see the following files inside this new directory:</p>
+<ul>
+<li>README.md - a set of instructions with how to use the credentials</li>
+<li>ca.pem - Certificate Authority, used by clients to validate servers</li>
+<li>cert.pem - Client Certificate, used by clients to identify themselves to servers</li>
+<li>key.pem - Client Private Key, used by clients to encrypt their requests</li>
+<li>ca-key.pem - Certificate Authority Key, private file used to generate more client certificates.</li>
+<li>docker.env - Shell environment config file</li>
+</ul>
+<h2>Install Docker 1.6 on your client</h2><p>The Rackspace cluser service is currently tied to Docker 1.6, so you&#39;ll need to install that version on your client.  The good things is that it&#39;s just a single compiled binary, so all you have to do is put it on your path.  (Note: if you already have a later version of Docker installed, you can doenload the file and give it a name like <code>docker16</code> so that you don&#39;t have a conflict.)</p>
+<h2>Set up the Docker environment variables</h2><p>Once you&#39;ve downloaded the credentials, just <code>scp</code> the file over, like this:</p>
+<pre><code>scp your-credential-file.zip root@rackspace-swarm-test:.
+</code></pre><p>Once it&#39;s copied, login to the server, unzip it.  Run the <code>docker.env</code> file inside your new directory in order to set your credentials so that you can access the swarm:</p>
+<pre><code>$ cd e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6/
+$ source docker.env
+</code></pre><p>You can use <code>docker info</code> to see the setup:</p>
+<pre><code># docker info
+Containers: 12
+Images: 8
+Storage Driver:
+Role: primary
+Strategy: spread
+Filters: affinity, health, constraint, port, dependency
+Nodes: 2
+ e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6-n1: 104.130.0.51:42376
+  └ Containers: 6
+  └ Reserved CPUs: 0 / 12
+  └ Reserved Memory: 0 B / 2.1 GiB
+  └ Labels: executiondriver=native-0.2, kernelversion=3.12.36-2-rackos, operatingsystem=Debian GNU/Linux 7 (wheezy) (containerized), storagedriver=aufs
+ e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6-n2: 104.130.0.52:42376
+  └ Containers: 6
+  └ Reserved CPUs: 0 / 12
+  └ Reserved Memory: 0 B / 2.1 GiB
+  └ Labels: executiondriver=native-0.2, kernelversion=3.12.36-2-rackos, operatingsystem=Debian GNU/Linux 7 (wheezy) (containerized), storagedriver=aufs
+Execution Driver:
+Kernel Version:
+Operating System:
+CPUs: 24
+Total Memory: 4.2 GiB
+Name: cbf73ed2e215
+ID:
+Http Proxy:
+Https Proxy:
+No Proxy:
+</code></pre><h1>Start a container on the swarm</h1><p>Once you get all the credentials set up, using the swarm looks a lot like using regular old docker, except now everything is running on a cluster.  </p>
+<p>For example, here&#39;s how you start a notebook on the swarm</p>
+<pre><code>docker run -d            \
+   -p 8888               \
+   ipython/scipystack    \
+   /bin/sh -c &#39;ipython notebook --ip=0.0.0.0 --no-browser&#39;
+</code></pre><p>To see the status, do a <code>docker ps</code></p>
+<pre><code># docker ps
+CONTAINER ID        IMAGE                       COMMAND                CREATED             STATUS              PORTS                          NAMES
+e13c8fdc2ce8        ipython/scipystack:latest   &quot;/bin/sh -c &#39;ipython   4 seconds ago       Up 5 seconds        104.130.0.51:49153-&gt;8888/tcp   e1c3155e-a0f2-4e8b-acb8-de123e8dd3c6-n1/dreamy_elion
+</code></pre><p>From the output, you can see that the notebook server is running at <code>104.130.0.51:49153</code>.  Opening this in the browser will let you use the web UI.</p>
+
+      
+
+<div class="nav-buttons">
+<ul class="nav nav-pills">
+   
+      <li>
+         <a href="rack-overview.html" title="Rack Overview"> 
+            <span class="glyphicon glyphicon-chevron-left"/> Previous
+         </a>
+      </li>
+   
+   
+      <li>
+         <a href="service-discovery-with-interlock.html" title="Service Discovery with Interlock"> 
+            Next <span class="glyphicon glyphicon-chevron-right"/>
+         </a>
+      </li>
+   
+</ul>
+</div>
+
+
+      <div id="disqus_thread"></div>
+
+    </section>
+  </section>
+</div>
+
+<footer>
+  <img class="logo" src="http://orm-logo-service.herokuapp.com/webops/logo.svg"/>
+</footer>
+
+<script type="text/javascript">
+  var toggled;
+  $("#link-toc").click(function (event) {
+    event.preventDefault();
+    var sidebar = $("#sidebar");
+    if (!toggled) {
+      sidebar.transition({x: '25rem'});
+      toggled = true;
+    } else {
+      sidebar.transition({x: '-25rem'});
+      toggled = false;
+    }
+  });
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    window.disqus_shortname = 'dockerjumpstart'; // required: replace example with your forum shortname
+    window.disqus_title = $('title').text() + " / " + $('h1').first().text();
+    window.disqus_id = $('title').text() + " / " + $('section').first().attr('id');
+
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  });
+</script>
+</body>
+</html>

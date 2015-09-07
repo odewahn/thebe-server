@@ -1,0 +1,18 @@
+{
+   "contents": {
+     "rack-overview": {
+         "title" : "Rack Overview",
+         "icon": "fa-circle-o"
+      },
+      "rackspace-create-cluster": {
+         "title" : "Create a Cluster",
+         "icon": "fa-circle-o"
+      },
+      "service-discovery-with-interlock": {
+         "title" : "Service Discovery with Interlock",
+         "icon": "fa-circle-o"
+      }
+   },
+   "testimonials": [
+   ]
+}
