@@ -6,7 +6,7 @@ It provides a really simple way to do service discovery for swarm.
 
 ## Starting Interlock
 
-To use it, you'll need to give it following values, which can all be found in the `credentials` file for your cluster:
+You must provide the HAProxy plugin with the following values, which can all be found in the `credentials` file for your cluster:
 
 * --swarm-url: url to swarm (default: tcp://127.0.0.1:2375)
 * --swarm-tls-ca-cert: TLS CA certificate to use with swarm (optional)

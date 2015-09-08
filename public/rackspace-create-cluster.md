@@ -1,7 +1,6 @@
 # Create a rackspace cluster
 
-Once you've got the two servers set up, you're ready to create a swarm cluster.  First, log into the [rackspace cluster manager](https://mycluster.rackspacecloud.com/).  
-From the main page, create a new cluster (right now there's only 1 button to push).  I've named mine `thebe-test`:
+Once you've got the two servers set up, you're ready to create a swarm cluster.  First, log into the [rackspace cluster manager](https://mycluster.rackspacecloud.com/). From the main page, create a new cluster (right now there's only 1 button to push).  I've named mine `thebe-test`:
 
 ![Cluster dashboard](images/rackspace-cluster.png)
 
