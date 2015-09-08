@@ -81,7 +81,7 @@
 
       <h1>Service discovery with interlock (HAProxy plugin)</h1><p><a href="https://github.com/ehazlett/interlock">Interlock</a> is a plugin-service for Docker.  Its <a href="https://github.com/ehazlett/interlock/tree/master/plugins/haproxy">HAProxy</a> plugin &quot;adds an event driven load balancer and reverse proxy for Docker. It automatically adds containers that are running in a Swarm to HAProxy.&quot;  </p>
 <p>It provides a really simple way to do service discovery for swarm.</p>
-<h2>Starting Interlock</h2><p>To use it, you&#39;ll need to give it following values, which can all be found in the <code>credentials</code> file for your cluster:</p>
+<h2>Starting Interlock</h2><p>You must provide the HAProxy plugin with the following values, which can all be found in the <code>credentials</code> file for your cluster:</p>
 <ul>
 <li>--swarm-url: url to swarm (default: tcp://127.0.0.1:2375)</li>
 <li>--swarm-tls-ca-cert: TLS CA certificate to use with swarm (optional)</li>
