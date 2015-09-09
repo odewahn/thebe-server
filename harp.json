@@ -1,6 +1,6 @@
 {
    "globals": {
-      "title": "A Jupyter Backend Server for on Rackspace's Docker Swarm Service",
+      "title": "Jupyter/Thebe Server on Rackspace",
       "author": "Andrew Odewahn"
    }
 }
