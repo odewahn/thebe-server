@@ -6,6 +6,8 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"os"
+	"github.com/samalba/dockerclient"
+	"crypto/tls"
 )
 
 func main() {
@@ -18,11 +20,20 @@ func main() {
 
 	// Read the port
 	port := os.Getenv("PORT")
+	tls := tls.Config()
+
+
+	docker, _ := dockerclient.NewDockerClient(
+		os.Getenv("DOCKER_HOST"),
+		*tls
+	)
+
 
 	mux := mux.NewRouter()
 	// mux.HandleFunc("/events", get_events(dbmap)).Methods("GET")
 	// mux.HandleFunc("/events/{year}", get_events_by_year(dbmap)).Methods("GET")
 	mux.HandleFunc("/spawn", spawn()).Methods("GET")
+	mux.HandleFunc("/list-containers", list_containers(docker)).Methods("GET")
 	n := negroni.Classic()
 	n.UseHandler(mux)
 	log.Printf("Listening on port %s\n", port)
