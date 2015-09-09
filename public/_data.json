@@ -11,6 +11,10 @@
       "service-discovery-with-interlock": {
          "title" : "Service discovery with interlock (HAProxy plugin)",
          "icon": "fa-circle-o"
+      },
+      "thebe-server": {
+         "title" : "The thebe-server API",
+         "icon": "fa-circle-o"
       }
    },
    "testimonials": [

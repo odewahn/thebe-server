@@ -85,35 +85,45 @@
   <section id="content">
     <section id="content-body">
 
-      <h1>Configure the server to control the cluster</h1><p>We&#39;ll need two servers: <code>rackspace-swarm-test</code> and <code>interlock</code>.</p>
-<p>The first server, <code>rackspace-swarm-test</code>, will be used to launch and control the cluster.  Here&#39;s the command to create it:</p>
-<pre><code>rack servers instance create \
-    --name swarm-test \
-    --image-id 5ed162cc-b4eb-4371-b24a-a0ae73376c73 \
-    --flavor-id general1-1
-</code></pre><p>You&#39;ll get back a response like this:</p>
-<pre><code>ID        e3f8a765-8ced-457b-92ea-a16adbfd578d
-AdminPass    ************
-</code></pre><p>Once you get the login, run the following command to get your IP-address:</p>
-<pre><code>$ rack servers instance list
-ID                    Name            Status    PublicIPv4    PrivateIPv4    Image        Flavor
-9ca37f1c-1951-43a5-a478-9cfef4571609    rackspace-swarm-test    ACTIVE    104.130.169.111    10.176.194.230    5ed162cc-b4e
-...
-</code></pre><p>Then, login, like this:</p>
-<pre><code>$ ssh root@104.130.169.111
-</code></pre><p>Finally, to make things simpler, add your public key to the <code>~/.ssh/authorized_keys</code> file and do whatever other setup you would normally do on a new user account (<code>apt-get update</code>, create a user, etc).</p>
-<p>Use the password that you got from the command line tool.  You can also probably use a <a href="keypair.md">keypair</a>, although I&#39;ve not figured out how to make that work.  <em>ALSO, THIS WOULD BE A GOOD PLACE TO HAVE SOMETHING LIKE ANSIBLE</em>.</p>
-<p>Once you&#39;ve set up that server, create another one to run <a href="https://github.com/ehazlett/interlock">Interlock</a>, the proxy server for swarm:</p>
-<pre><code>rack servers instance create \
-    --name interlock \
-    --image-id 5ed162cc-b4eb-4371-b24a-a0ae73376c73 \
-    --flavor-id general1-1
-</code></pre>
+      <h1>The <code>thebe-server</code> API</h1><p><code>thebe-server</code> is a simple API that is used to start and stop containers on the swarm.  It provides the following endpoints:</p>
+<ul>
+<li><code>/spawn</code> -- starts a container on the swarm</li>
+<li>???</li>
+</ul>
+<p>To run it (either locally or on production), be sure to create a <code>.env</code> file with the following variables (the value will, of course, depend on your environment):</p>
+<ul>
+<li>PORT=8000</li>
+<li>DOCKER_HOST=tcp://104.130.0.52:2376</li>
+<li>SWARM_CREDS_DIR=/Users/apple/Desktop/9fadfa89-0400-453a-a7eb-436aea737831</li>
+<li>THEBE_SERVER_BASE_URL=&quot;interlock.odewahn.com&quot;</li>
+</ul>
+<h2>Development</h2><p>Use <a href="https://github.com/codegangsta/gin">gin</a> to develop the <code>thebe-server</code> locally. (Don&#39;t forget to your <code>.env</code>).</p>
+<h2>Building a production container</h2><p>The <code>thebe-server</code> also runs on your rackspace cluster as a docker container.  Since we&#39;re using go, we can use <a href="https://twitter.com/ngauthier">@ngauthier</a>&#39;s great article <a href="https://blog.codeship.com/building-minimal-docker-containers-for-go-applications/">Building Minimal Docker Containers for Go Applications</a> to create a super slim container image that has only our comiled binary and <code>.env</code> file.  (NB: it will probably also need to have docker 1.6 binary at some point!).  </p>
+<p>Basically, we first build a static binary and add it to the super minimalist <code>scratch</code> image from Docker.  Here are the commands:</p>
+<pre><code>GOOS=linux go build -a -installsuffix cgo -o thebe-server .
+docker build -t thebe-server .
+</code></pre><p>As specified in the <code>Dockerfile</code>, the build process will put the <code>thebe-server</code> binary and a file called <code>.env.prod</code>, which holds the production environment variables, onto the image.</p>
+<p>If you&#39;re not using Go 1.5, consult <a href="http://stackoverflow.com/questions/27412601/cross-compiling-go">Cross Compiling Go</a> on Stackoverflow for information on how to compile a binary for earlier versions of Go.</p>
+<h2>Starting <code>thebe-server</code> on the swarm</h2><p>Once you&#39;ve built the container, you&#39;re ready to start <code>thebe-server</code> on the swarm.  Since we&#39;ll be issuing docker commands against the swarm itself, we need to add the <code>--volumes-from swarm-data</code> option in the <code>docker run</code> command to include the swarm credentials automatically.  This will mount our swarm&#39;s credentials in the <code>/etc/docker</code> directory, so in your <code>.env.prod</code> file you&#39;d set <code>SWARM_CREDS_DIR=/etc/docker</code>.</p>
+<p>Finally, we&#39;re ready to start our service on the swarm:</p>
+<pre><code>docker run -d  \
+   -p 8000 \
+   -P \
+   --volumes-from swarm-data \
+   --hostname thebe-server.interlock.odewahn.com \
+   thebe-server
+</code></pre><p>Once it starts, you should see it pop up in the HAProxy stats page, just like the other containers you&#39;re running there.  However, in this instance, we&#39;re using  fixed hostname to serve as the endpoint for the API.</p>
 
       
 
 <div class="nav-buttons">
 <ul class="nav nav-pills">
+   
+      <li>
+         <a href="service-discovery-with-interlock.html" title="Service discovery with interlock (HAProxy plugin)"> 
+            <span class="glyphicon glyphicon-chevron-left"/> Previous
+         </a>
+      </li>
    
    
 </ul>

@@ -1,4 +1,4 @@
-# Running `thebe-server`
+# The `thebe-server` API
 
 `thebe-server` is a simple API that is used to start and stop containers on the swarm.  It provides the following endpoints:
 

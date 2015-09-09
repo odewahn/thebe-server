@@ -19,7 +19,7 @@ All the docker containers are launched and managed by on a swarm cluster managed
 
 ## Interlock
 
-Interlock (https://github.com/ehazlett/interlock), a Docker plugin service, provides a slick way to us HAProxy to handle service discovery for clusters on the swarm.  So, whenever we start a container on the swarm, Interlock will expose it using the `hostname` we supply in the `docker run` command.  When you kill a container, interlock will delete it from the host setup.
+[Interlock](https://github.com/ehazlett/interlock), a Docker plugin service, provides a slick way to us HAProxy to handle service discovery for clusters on the swarm.  So, whenever we start a container on the swarm, Interlock will expose it using the `hostname` we supply in the `docker run` command.  When you kill a container, interlock will delete it from the host setup.
 
 [Service discovery with interlock (HAProxy plugin)](public/service-discovery-with-interlock.md) has the details.
 
@@ -27,4 +27,4 @@ Interlock (https://github.com/ehazlett/interlock), a Docker plugin service, prov
 
 `thebe-server` is a Go-based application that provides an API for starting and stopping containers on the swarm.  Basically, it provide similar endpoints used by [tmpnb](https://github.com/jupyter/tmpnb), but it does not try to handle pooling or other services.  Instead, it's focus is on allowing you to start many different kinds of containers that you can connect to `thebe`
 
-[Running `thebe-server`](public/thebe-server.md) has details on the API and on the development and deployment process.  The cool things about `thebe-server` is that it is also a containerized, and can run on the same swarm setup as the other containers, making it simple to manage.
+[The `thebe-server` API](public/thebe-server.md) has details on the API and on the development and deployment process.  The cool things about `thebe-server` is that it is also a containerized, and can run on the same swarm setup as the other containers, making it simple to manage.
