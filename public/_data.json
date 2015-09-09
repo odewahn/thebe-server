@@ -1,15 +1,15 @@
 {
    "contents": {
      "rack-overview": {
-         "title" : "Rack Overview",
+         "title" : "Rack overview",
          "icon": "fa-circle-o"
       },
       "rackspace-create-cluster": {
-         "title" : "Create a Cluster",
+         "title" : "Creating a swarm cluster on Rackspace",
          "icon": "fa-circle-o"
       },
       "service-discovery-with-interlock": {
-         "title" : "Service Discovery with Interlock",
+         "title" : "Service discovery with interlock (HAProxy plugin)",
          "icon": "fa-circle-o"
       }
    },
