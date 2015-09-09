@@ -29,7 +29,6 @@ func spawn() http.HandlerFunc {
 		url := fmt.Sprintf("%s.%s", randStr(), os.Getenv("THEBE_SERVER_BASE_URL") )
 		s := Spawn{ Url: url }
 		dat, err := json.MarshalIndent(&s, "", "  ")
-		fmt.Println(dat)
 		if err != nil {
 			log.Fatal(err)
 		}
