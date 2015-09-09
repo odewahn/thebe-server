@@ -2,7 +2,7 @@
 
 <head>
   <meta charset="UTF-8"/>
-  <title>Rackspace Swarm</title>
+  <title>A Jupyter Backend Server for on Rackspace&#39;s Docker Swarm Service</title>
 
   <!-- Styling -->
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -26,7 +26,7 @@
   </div>
 
   <div class="heading">
-    <h1><a href="index.html">Rackspace Swarm by Andrew Odewahn</a></h1>
+    <h1><a href="index.html">A Jupyter Backend Server for on Rackspace&#39;s Docker Swarm Service by Andrew Odewahn</a></h1>
 
     <div class="social-buttons">
       <div class="twitter">
@@ -91,13 +91,11 @@
 <li>???</li>
 </ul>
 <p>To run it (either locally or on production), be sure to create a <code>.env</code> file with the following variables (the value will, of course, depend on your environment):</p>
-<ul>
-<li>PORT=8000</li>
-<li>DOCKER_HOST=tcp://104.130.0.52:2376</li>
-<li>SWARM_CREDS_DIR=/Users/apple/Desktop/9fadfa89-0400-453a-a7eb-436aea737831</li>
-<li>THEBE_SERVER_BASE_URL=&quot;interlock.odewahn.com&quot;</li>
-</ul>
-<h2>Development</h2><p>Use <a href="https://github.com/codegangsta/gin">gin</a> to develop the <code>thebe-server</code> locally. (Don&#39;t forget to your <code>.env</code>).</p>
+<pre><code>PORT=8000
+DOCKER_HOST=tcp://104.130.0.52:2376
+SWARM_CREDS_DIR=/Users/apple/Desktop/9fadfa89-0400-453a-a7eb-436aea737831
+THEBE_SERVER_BASE_URL=&quot;interlock.odewahn.com&quot;
+</code></pre><h2>Development</h2><p>Use <a href="https://github.com/codegangsta/gin">gin</a> to develop the <code>thebe-server</code> locally. (Don&#39;t forget to your <code>.env</code>).</p>
 <h2>Building a production container</h2><p>The <code>thebe-server</code> also runs on your rackspace cluster as a docker container.  Since we&#39;re using go, we can use <a href="https://twitter.com/ngauthier">@ngauthier</a>&#39;s great article <a href="https://blog.codeship.com/building-minimal-docker-containers-for-go-applications/">Building Minimal Docker Containers for Go Applications</a> to create a super slim container image that has only our comiled binary and <code>.env</code> file.  (NB: it will probably also need to have docker 1.6 binary at some point!).  </p>
 <p>Basically, we first build a static binary and add it to the super minimalist <code>scratch</code> image from Docker.  Here are the commands:</p>
 <pre><code>GOOS=linux go build -a -installsuffix cgo -o thebe-server .

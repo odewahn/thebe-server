@@ -7,11 +7,12 @@
 
 To run it (either locally or on production), be sure to create a `.env` file with the following variables (the value will, of course, depend on your environment):
 
-* PORT=8000
-* DOCKER_HOST=tcp://104.130.0.52:2376
-* SWARM_CREDS_DIR=/Users/apple/Desktop/9fadfa89-0400-453a-a7eb-436aea737831
-* THEBE_SERVER_BASE_URL="interlock.odewahn.com"
-
+```
+PORT=8000
+DOCKER_HOST=tcp://104.130.0.52:2376
+SWARM_CREDS_DIR=/Users/apple/Desktop/9fadfa89-0400-453a-a7eb-436aea737831
+THEBE_SERVER_BASE_URL="interlock.odewahn.com"
+```
 
 ## Development
 
