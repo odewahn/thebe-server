@@ -9,9 +9,26 @@ import (
     "io/ioutil"
 )
 
-func getTLSConfig(caCert, cert, key []byte, allowInsecure bool) (*tls.Config, error) {
+// Reads the specified file into a byte array
+func fetchFile(path, fn string) ([]byte, error) {
+  fileName := fmt.Sprintf("%s/%s", path, fn)
+  out, err := ioutil.ReadFile(fileName)
+  if err != nil {
+    log.Fatalf("error loading %s : %s", fn, err)
+  }
+  return out, err
+}
+
+// Loads and returns a tls config settings for the swarm.  Lightly adapted version of:
+//     https://github.com/ehazlett/interlock/blob/master/interlock/main.go#L14-L32
+func getTLSConfig(certsDir string) (*tls.Config, error) {
 	// TLS config
 	var tlsConfig tls.Config
+
+  caCert, err := fetchFile(certsDir, "ca.pem")
+  cert, err := fetchFile(certsDir, "cert.pem")
+  key, err := fetchFile(certsDir, "key.pem")
+
 	tlsConfig.InsecureSkipVerify = true
 	certPool := x509.NewCertPool()
 
@@ -22,9 +39,6 @@ func getTLSConfig(caCert, cert, key []byte, allowInsecure bool) (*tls.Config, er
 		return &tlsConfig, err
 	}
 	tlsConfig.Certificates = []tls.Certificate{keypair}
-	if allowInsecure {
-		tlsConfig.InsecureSkipVerify = true
-	}
 
 	return &tlsConfig, nil
 }
@@ -32,32 +46,13 @@ func getTLSConfig(caCert, cert, key []byte, allowInsecure bool) (*tls.Config, er
 
 func main() {
     // Init the client
-    docker_url := "tcp://104.130.0.52:2376"
+    dockerURL := "tcp://104.130.0.52:2376"
 
-    certs_dir := "/Users/apple/Desktop/9fadfa89-0400-453a-a7eb-436aea737831"
+    certsDir := "/Users/apple/Desktop/9fadfa89-0400-453a-a7eb-436aea737831"
 
-    caCertFile := fmt.Sprintf("%s/ca.pem", certs_dir)
-    caCert, err := ioutil.ReadFile(caCertFile)
-    if err != nil {
-      log.Fatalf("error loading tls ca cert: %s", err)
-    }
+    tlsConfig, err := getTLSConfig(certsDir)
 
-    certFile := fmt.Sprintf("%s/cert.pem", certs_dir)
-    cert, err := ioutil.ReadFile(certFile)
-    if err != nil {
-      log.Fatalf("error loading tls cert: %s", err)
-    }
-
-    keyFile := fmt.Sprintf("%s/key.pem", certs_dir)
-    key, err := ioutil.ReadFile(keyFile)
-		if err != nil {
-			log.Fatalf("error loading tls key: %s", err)
-		}
-
-
-    tlsConfig, err := getTLSConfig(caCert, cert, key, false)
-
-    docker, _ := dockerclient.NewDockerClient(docker_url, tlsConfig)
+    docker, _ := dockerclient.NewDockerClient(dockerURL, tlsConfig)
 
     // Get only running containers
     containers, err := docker.ListContainers(false, false, "")
