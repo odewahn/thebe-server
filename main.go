@@ -10,6 +10,9 @@ import (
 	"crypto/tls"
 )
 
+// Need a function to define the tls Config
+//   https://github.com/ehazlett/interlock/blob/master/interlock/main.go#L14-L32
+
 func main() {
 
 	// Load the environment variables we need
