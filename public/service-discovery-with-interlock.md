@@ -30,8 +30,8 @@ export SWARM_URL=tcp://104.130.0.52:2376
 docker run -d -p 80:80 -v $CREDS_DIR:/certs ehazlett/interlock \
    --swarm-url         $SWARM_URL \
    --swarm-tls-ca-cert /certs/ca.pem \
-   --swarm-tls-cert    /certs/cert.pem \
-   --swarm-tls-key     /certs/key.pem \
+   --swarm-tls-cert    /certs/server-cert.pem \
+   --swarm-tls-key     /certs/server-key.pem \
    --debug \
    --plugin haproxy start
 ```
