@@ -26,9 +26,9 @@ func getTLSConfig(certsDir string) (*tls.Config, error) {
 	// TLS config
 	var tlsConfig tls.Config
 
-  caCert, err := fetchFile(certsDir, "ca.pem")
-  cert, err := fetchFile(certsDir, "cert.pem")
-  key, err := fetchFile(certsDir, "key.pem")
+  caCert, err := fetchFile(certsDir, os.Getenv("SWARM_CA"))
+  cert, err := fetchFile(certsDir, os.Getenv("SWARM_CERT"))
+  key, err := fetchFile(certsDir, os.Getenv("SWARM_KEY"))
 
 	tlsConfig.InsecureSkipVerify = true
 	certPool := x509.NewCertPool()
