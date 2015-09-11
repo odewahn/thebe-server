@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"github.com/samalba/dockerclient"
-	"crypto/tls"
 )
 
 // Need a function to define the tls Config
@@ -23,19 +22,20 @@ func main() {
 
 	// Read the port
 	port := os.Getenv("PORT")
-	tls := tls.Config()
+
+	tlsConfig, err := getTLSConfig(os.Getenv("SWARM_CREDS_DIR"))
+	if err != nil {
+		log.Fatal("Could not create TLS certificate.")
+	}
 
 
-	docker, _ := dockerclient.NewDockerClient(
-		os.Getenv("DOCKER_HOST"),
-		*tls
-	)
+	docker, _ := dockerclient.NewDockerClient(os.Getenv("DOCKER_HOST"), tlsConfig)
 
 
 	mux := mux.NewRouter()
 	// mux.HandleFunc("/events", get_events(dbmap)).Methods("GET")
 	// mux.HandleFunc("/events/{year}", get_events_by_year(dbmap)).Methods("GET")
-	mux.HandleFunc("/spawn", spawn()).Methods("GET")
+	mux.HandleFunc("/spawn", spawn(docker)).Methods("GET")
 	mux.HandleFunc("/list-containers", list_containers(docker)).Methods("GET")
 	n := negroni.Classic()
 	n.UseHandler(mux)

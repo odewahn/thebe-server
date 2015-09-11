@@ -1,32 +1,26 @@
 package main
 
 import (
-	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"github.com/samalba/dockerclient"
 )
 
 type Spawn struct {
 	Url string `json:"url"`
 }
 
-// From https://www.socketloop.com/tutorials/golang-how-to-generate-random-string
-func randStr() string {
-	dictionary := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-	var bytes = make([]byte, 12)
-	rand.Read(bytes)
-	for k, v := range bytes {
-		bytes[k] = dictionary[v%byte(len(dictionary))]
-	}
-	return string(bytes)
-}
 
-func spawn() http.HandlerFunc {
+func spawn(docker *dockerclient.DockerClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		url := fmt.Sprintf("%s.%s", randStr(), os.Getenv("THEBE_SERVER_BASE_URL") )
+
+		hostname := generateHostName()
+		err := launchNotebook(docker, hostname, "ipython/scipystack")
+
+		url := fmt.Sprintf("%s.%s", hostname, os.Getenv("THEBE_SERVER_BASE_URL") )
 		s := Spawn{ Url: url }
 		dat, err := json.MarshalIndent(&s, "", "  ")
 		if err != nil {
