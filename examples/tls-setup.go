@@ -53,6 +53,7 @@ func main() {
     tlsConfig, err := getTLSConfig(certsDir)
 
     docker, _ := dockerclient.NewDockerClient(dockerURL, tlsConfig)
+    hostname := "odewahn"
 
     // Get only running containers
     containers, err := docker.ListContainers(false, false, "")
@@ -62,6 +63,33 @@ func main() {
     for _, c := range containers {
         log.Println(c.Id, c.Names)
     }
+
+
+    // Create a container
+    containerConfig := &dockerclient.ContainerConfig{
+        Image: "ipython/scipystack",
+        Cmd:   []string{"/bin/sh", "-c", "ipython notebook --ip=0.0.0.0 --no-browser"},
+        ExposedPorts: map[string]struct{}{
+          "8888/tcp": {},
+        },
+        Hostname: hostname,
+        Domainname: "interlock.odewahn.com",
+    }
+
+    containerId, err := docker.CreateContainer(containerConfig, hostname)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Start the container
+    hostConfig := &dockerclient.HostConfig{
+      PublishAllPorts: true,
+    }
+    err = docker.StartContainer(containerId, hostConfig)
+    if err != nil {
+        log.Fatal(err)
+    }
+
 
 
 }
