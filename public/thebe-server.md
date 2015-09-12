@@ -26,7 +26,7 @@ Basically, we first build a static binary and add it to the super minimalist `sc
 
 ```
 GOOS=linux go build -a -installsuffix cgo -o thebe-server .
-docker build -t thebe-server .
+docker build --no-cache -t thebe-server .
 ```
 
 As specified in the `Dockerfile`, the build process will put the `thebe-server` binary and a file called `.env.prod`, which holds the production environment variables, onto the image.
@@ -46,6 +46,7 @@ docker run -d  \
    -P \
    --volumes-from swarm-data \
    --hostname thebe-server.interlock.odewahn.com \
+   --name thebe_server \
    thebe-server
 ```
 

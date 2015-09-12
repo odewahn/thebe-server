@@ -4,9 +4,9 @@ import (
 	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/samalba/dockerclient"
 	"log"
 	"os"
-	"github.com/samalba/dockerclient"
 )
 
 // Need a function to define the tls Config
@@ -28,9 +28,7 @@ func main() {
 		log.Fatal("Could not create TLS certificate.")
 	}
 
-
 	docker, _ := dockerclient.NewDockerClient(os.Getenv("DOCKER_HOST"), tlsConfig)
-
 
 	mux := mux.NewRouter()
 	// mux.HandleFunc("/events", get_events(dbmap)).Methods("GET")

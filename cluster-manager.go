@@ -1,23 +1,23 @@
 package main
 
 import (
-    "github.com/samalba/dockerclient"
-    "log"
-    "fmt"
-    "crypto/tls"
-    "crypto/x509"
-    "io/ioutil"
-    "os"
+	"crypto/tls"
+	"crypto/x509"
+	"fmt"
+	"github.com/samalba/dockerclient"
+	"io/ioutil"
+	"log"
+	"os"
 )
 
 // Reads the specified file into a byte array
 func fetchFile(path, fn string) ([]byte, error) {
-  fileName := fmt.Sprintf("%s/%s", path, fn)
-  out, err := ioutil.ReadFile(fileName)
-  if err != nil {
-    log.Fatalf("error loading %s : %s", fn, err)
-  }
-  return out, err
+	fileName := fmt.Sprintf("%s/%s", path, fn)
+	out, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		log.Fatalf("error loading %s : %s", fn, err)
+	}
+	return out, err
 }
 
 // Loads and returns a tls config settings for the swarm.  Lightly adapted version of:
@@ -26,9 +26,9 @@ func getTLSConfig(certsDir string) (*tls.Config, error) {
 	// TLS config
 	var tlsConfig tls.Config
 
-  caCert, err := fetchFile(certsDir, os.Getenv("SWARM_CA"))
-  cert, err := fetchFile(certsDir, os.Getenv("SWARM_CERT"))
-  key, err := fetchFile(certsDir, os.Getenv("SWARM_KEY"))
+	caCert, err := fetchFile(certsDir, os.Getenv("SWARM_CA"))
+	cert, err := fetchFile(certsDir, os.Getenv("SWARM_CERT"))
+	key, err := fetchFile(certsDir, os.Getenv("SWARM_KEY"))
 
 	tlsConfig.InsecureSkipVerify = true
 	certPool := x509.NewCertPool()
@@ -44,34 +44,32 @@ func getTLSConfig(certsDir string) (*tls.Config, error) {
 	return &tlsConfig, nil
 }
 
+func launchNotebook(docker *dockerclient.DockerClient, hostname, image string) error {
 
+	// Create a container
+	containerConfig := &dockerclient.ContainerConfig{
+		Image: image,
+		Cmd:   []string{"/bin/sh", "-c", "ipython notebook --ip=0.0.0.0 --no-browser"},
+		ExposedPorts: map[string]struct{}{
+			"8888/tcp": {},
+		},
+		Hostname:   hostname,
+		Domainname: os.Getenv("THEBE_SERVER_BASE_URL"),
+	}
 
-func launchNotebook(docker *dockerclient.DockerClient, hostname, image string) (error) {
+	containerId, err := docker.CreateContainer(containerConfig, hostname)
+	if err != nil {
+		log.Println(err)
+	}
 
-    // Create a container
-    containerConfig := &dockerclient.ContainerConfig{
-        Image: image,
-        Cmd:   []string{"/bin/sh", "-c", "ipython notebook --ip=0.0.0.0 --no-browser"},
-        ExposedPorts: map[string]struct{}{
-          "8888/tcp": {},
-        },
-        Hostname: hostname,
-        Domainname: os.Getenv("THEBE_SERVER_BASE_URL"),
-    }
-
-    containerId, err := docker.CreateContainer(containerConfig, hostname)
-    if err != nil {
-        log.Println(err)
-    }
-
-    // Start the container
-    hostConfig := &dockerclient.HostConfig{
-      PublishAllPorts: true,
-    }
-    err = docker.StartContainer(containerId, hostConfig)
-    if err != nil {
-        log.Println(err)
-    }
-    return err
+	// Start the container
+	hostConfig := &dockerclient.HostConfig{
+		PublishAllPorts: true,
+	}
+	err = docker.StartContainer(containerId, hostConfig)
+	if err != nil {
+		log.Println(err)
+	}
+	return err
 
 }
